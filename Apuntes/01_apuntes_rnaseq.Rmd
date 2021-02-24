@@ -2,7 +2,9 @@
 title: "01_apuntes_rnaseq"
 author: "Emmanuel"
 date: "23/2/2021"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 ## Rstudio y Github
 **Github** te permite compartir códigos y tener un control de tus códigos, permite varios lenguajes de programación y varios tipos de documentos como texto plano, pdfs, imágenes, entre otros.
@@ -10,7 +12,8 @@ output: html_document
 En **Rstudio** es una forma más gráfica de manejar R y te permite realizar varias cosas de forma más rápida que con solo R. También te permite crear proyectos, documentos en R, en Rmarkdown, etc. También facilita la conversión a un html o un pdf de tus códigos, así como las gráficas de estos a imágenes que puedes almacenar. Otra ventaja de Rstudio es que puedes crear repositorios locales de git y después subirlos a github.
 
 **Error al crear un repositorio y alternativa**
-```{r}
+
+```
 gitcreds::gitcreds_set() #Sirve para tener las credenciales adecuadas para manejar git.
 #Hay ocasiones en las que no funciona bien, para lo cual se utiliza una forma no recomendada
 usethis::edit_r_environ()
@@ -23,7 +26,7 @@ usethis::edit_r_environ()
 En caso de que el boton de git de la parte superior derecha no aparezca después del *usethis::use_git()* reiniciar R en *Session* de la parte superior de las herramientas y *Restart R*. En caso de no tenerlo después del procedimiento anterior verificar que tengas git instalado y que estes dentro del proyecto/repositorio.
 
 **Códigos alternos en caso de no tener el boton de git:**
-```{r}
+```
 #Primero se debe revisar que archivos con modificaciones hay que no se han subido a github.
 gert::git_status()
 #En el caso de la última columna tendrá un valor booleano: 
@@ -44,7 +47,7 @@ gert::git_push()
 
 
 ## Ejercicio postcards
-```{r}
+```
 #Creacion de nuestra página web, se utiliza nuestro usuario de github.
 usethis::create_project("Emma00000.github.io")
 
