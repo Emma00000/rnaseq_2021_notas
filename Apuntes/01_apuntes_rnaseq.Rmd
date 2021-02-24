@@ -1,0 +1,94 @@
+---
+title: "01_apuntes_rnaseq"
+author: "Emmanuel"
+date: "23/2/2021"
+output: html_document
+---
+## Rstudio y Github
+**Github** te permite compartir códigos y tener un control de tus códigos, permite varios lenguajes de programación y varios tipos de documentos como texto plano, pdfs, imágenes, entre otros.
+
+En **Rstudio** es una forma más gráfica de manejar R y te permite realizar varias cosas de forma más rápida que con solo R. También te permite crear proyectos, documentos en R, en Rmarkdown, etc. También facilita la conversión a un html o un pdf de tus códigos, así como las gráficas de estos a imágenes que puedes almacenar. Otra ventaja de Rstudio es que puedes crear repositorios locales de git y después subirlos a github.
+
+**Error al crear un repositorio y alternativa**
+```{r}
+gitcreds::gitcreds_set() #Sirve para tener las credenciales adecuadas para manejar git.
+#Hay ocasiones en las que no funciona bien, para lo cual se utiliza una forma no recomendada
+usethis::edit_r_environ()
+#Dentro del documento que se abre por la línea anterior escribe: 
+#GITHUB_PAT=TU_CLAVE_DE_40_LETRAS
+#
+#IMPORTANTE dejar el salto de línea.
+```
+
+En caso de que el boton de git de la parte superior derecha no aparezca después del *usethis::use_git()* reiniciar R en *Session* de la parte superior de las herramientas y *Restart R*. En caso de no tenerlo después del procedimiento anterior verificar que tengas git instalado y que estes dentro del proyecto/repositorio.
+
+**Códigos alternos en caso de no tener el boton de git:**
+```{r}
+#Primero se debe revisar que archivos con modificaciones hay que no se han subido a github.
+gert::git_status()
+#En el caso de la última columna tendrá un valor booleano: 
+#"true" para los que se han añadido pero no se han comentado.
+#"False" para los archivos que no se han añadido ni comentado.
+
+#Para los archivos no añadidos se utiliza:
+gert::git_add("file.example") #Pueden ser varios archivos, se pasan en un vector con sus nombres.
+
+#Para los archivos sin comentar:
+gert::git_commit("comentario de la modificación")
+#o si son varios:
+gert::git_commit_all("comentario de las modificaciones")
+
+#Y por último para subir las modificaciones a github:
+gert::git_push()
+```
+
+
+## Ejercicio postcards
+```{r}
+#Creacion de nuestra página web, se utiliza nuestro usuario de github.
+usethis::create_project("Emma00000.github.io")
+
+## Configura Git y GitHub
+usethis::use_git()
+usethis::use_github()
+#Se utiliza uno de los templados que tiene postcards.
+postcards::create_postcard(template = "onofre")
+#Se edita para que tenga nuestra información, se hace el commit y se sube a github.
+```
+
+## Bioconductor
+Es un repositorio de paquetes de R que está enfocado al análisis de datos genómicos. Tienen varios tipos de paquetes:
+    Software: http://bioconductor.org/packages/release/bioc/
+    Annotation: http://bioconductor.org/packages/release/data/annotation/
+    Experiment Data: http://bioconductor.org/packages/release/data/experiment/
+    Workflows: http://bioconductor.org/packages/release/workflows/
+Todos sus paquetes están descritos en un html asignado para cada uno siguiendo la lógica: https://bioconductor.org/packages/<pkg_name> . Esta descripción que tiene cada paquete cuenta con varias cosas para considerar usarlo o no, las preguntas que se le han hecho a los desarrolladores y sus respuestas, un puntaje que se le asigna, la documentación que tiene sus códigos, el tiempo que tienen en haberse creado, entre otros.
+
+## Ejercicio grupal
+
+**Velociraptor:**
+El paquete de velociraptor proporciona un “wrapper” para cálculos de velocidad de ARN en datos de ARN-seq de una sola célula. Se utilizan paquetes como basilisk y zellkonverter para convertir los datos de SingleCellExperiment (R) y AnnData (Python). Su documentación es aceptable, clara, siento que le falta en algunos puntos. Como es su primera versión es aceptable; no tiene preguntas en su html, pero en su github si tiene y se han contestado casi todas de una buena forma, exceptuando una muy reciente.
+
+URL
+-http://bioconductor.org/packages/release/bioc/html/velociraptor.html
+
+**ChromSCape**
+Es un paquete que perfila el paisaje de cromatina para Single Cell, analiza conjuntos de datos de epigenética y cubre pasos como el preprocesamiento, filtrado, batch correction, visualización, clustering análisis diferencial y análisis de conjuntos de genes. 
+La documentación no es muy extensa pero es clara y hasta el momento no hay preguntas de usuarios. Hasta ahora funciona en todas las plataformas.
+El repositorio tiene orden, aunque la documentación del código no es tan explícita.
+
+**ToxicoGx**
+El paquete permite analizar datos toxico genomicos, tanto para visualización y analisis de estos datos. 
+- En las pruebas en las distintas plataformas no se han encontrados errores
+- Hay una documentación adecuada y ejemplos de uso
+- No tiene preguntas hasta ahora
+La URL al codigo no esta clara
+Link: https://bioconductor.org/packages/release/bioc/html/ToxicoGx.html
+
+**Nebulosa**
+Permite una visualización de datos de experimentos de una sola celula.
+- Presenta errores en todas las plataformas
+- Documentación bastante breve
+- No tiene preguntas hasta ahora
+Link: https://bioconductor.org/packages/release/bioc/html/Nebulosa.html
+
