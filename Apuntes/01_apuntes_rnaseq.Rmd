@@ -1,10 +1,9 @@
 ---
-title: "01_apuntes_rnaseq"
-author: "Emmanuel"
-date: "23/2/2021"
+title: "Apuntes de la clase 1 Rna-seq"
+author: "Emmanuel Hernández Sánchez"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 ## Rstudio y Github
 **Github** te permite compartir códigos y tener un control de tus códigos, permite varios lenguajes de programación y varios tipos de documentos como texto plano, pdfs, imágenes, entre otros.
@@ -61,10 +60,15 @@ postcards::create_postcard(template = "onofre")
 
 ## Bioconductor
 Es un repositorio de paquetes de R que está enfocado al análisis de datos genómicos. Tienen varios tipos de paquetes:
-    Software: http://bioconductor.org/packages/release/bioc/
-    Annotation: http://bioconductor.org/packages/release/data/annotation/
-    Experiment Data: http://bioconductor.org/packages/release/data/experiment/
-    Workflows: http://bioconductor.org/packages/release/workflows/
+
+- Software: http://bioconductor.org/packages/release/bioc/
+
+- Annotation: http://bioconductor.org/packages/release/data/annotation/
+
+- Experiment Data: http://bioconductor.org/packages/release/data/experiment/
+
+- Workflows: http://bioconductor.org/packages/release/workflows/
+
 Todos sus paquetes están descritos en un html asignado para cada uno siguiendo la lógica: https://bioconductor.org/packages/<pkg_name> . Esta descripción que tiene cada paquete cuenta con varias cosas para considerar usarlo o no, las preguntas que se le han hecho a los desarrolladores y sus respuestas, un puntaje que se le asigna, la documentación que tiene sus códigos, el tiempo que tienen en haberse creado, entre otros.
 
 ## Ejercicio grupal
@@ -72,8 +76,7 @@ Todos sus paquetes están descritos en un html asignado para cada uno siguiendo 
 **Velociraptor:**
 El paquete de velociraptor proporciona un “wrapper” para cálculos de velocidad de ARN en datos de ARN-seq de una sola célula. Se utilizan paquetes como basilisk y zellkonverter para convertir los datos de SingleCellExperiment (R) y AnnData (Python). Su documentación es aceptable, clara, siento que le falta en algunos puntos. Como es su primera versión es aceptable; no tiene preguntas en su html, pero en su github si tiene y se han contestado casi todas de una buena forma, exceptuando una muy reciente.
 
-URL
--http://bioconductor.org/packages/release/bioc/html/velociraptor.html
+link: http://bioconductor.org/packages/release/bioc/html/velociraptor.html
 
 **ChromSCape**
 Es un paquete que perfila el paisaje de cromatina para Single Cell, analiza conjuntos de datos de epigenética y cubre pasos como el preprocesamiento, filtrado, batch correction, visualización, clustering análisis diferencial y análisis de conjuntos de genes. 
