@@ -1,0 +1,62 @@
+---
+title: "02_apuntes_rnaseq"
+author: "Emmanuel"
+date: "24/2/2021"
+output: html_document
+---
+
+## Objetos de Bioconductor
+Dentro de Bioconductor existen varios tipos de objetos para datos de expresión, los cuales son:
+
+- rnaseqGene
+
+- SummarizedExperiment
+
+- GenomicRanges
+
+- rtracklayer
+
+**SumarizedExperiment** este objeto necesita tres datos, los datos de los genes por cada muestra, una matriz; la información de las muestras, ordenadas en un dataframe conteniendo los nombres de las muestras de cada tratamiento que se utiliza; y la información de los genes, los nombres de cada gen en los cromosomas que se deseen almacenar. Los genes se organizan por renglones generalmente, mientras que las muestras se organizan por columnas.
+Este objeto nos permite organizar toda esta información y aparte sacarla con varias funciones.
+
+
+```
+## Ver los "unique" levels (cromosomas)
+seqlevels(rse)
+
+## Tabla comprimida por repetición de cada level (chromosoma)
+seqnames(rowRanges(rse))
+```
+## Ejercicio
+
+**Comando 1**
+Imprime el summary de los dos primeros genes de todas las muestras (A-F)
+```rse[1:2, ]```
+
+**Comando 2**
+Imprime el summary de todos los genes en las muestras A, D y F 
+```rse[, c("A", "D", "F")]```
+
+Del objeto de SumarizedExperiment muestra los siguientes datos:
+class → Nombre del objeto 
+dim → Dimesiones de la matriz 
+assay → Son los datos de un experimento, pueden haber varias tablas con distintos datos.
+rownames → el nombre de los genes 
+rowData names → nombre de las fila
+
+**iSEE**
+iSEE es un paquete que nos permite observar de manera gráfica e interactiva varios de los datos de los objetos de SumarizedExperiment.
+
+## Ejercicio con spatialLIBD
+
+
+- Explora en con un heatmap la expresión de los genes MOBP, MBP y PCP4. Si hacemos un clustering (agrupamos los genes), ¿cúales genes se parecen más?
+
+- MOBP y MBP son los más parecidos.
+
+- ¿En qué capas se expresan más los genes MOBP y MBP?
+
+- En WM. 
+
+(Gráficas en la carpeta de figuras del proyecto)
+
