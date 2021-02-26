@@ -1,7 +1,6 @@
 ---
-title: "02_apuntes_rnaseq"
-author: "Emmanuel"
-date: "24/2/2021"
+title: "Apuntes de la clase 2 de Rna-seq"
+author: "Emmanuel Hernández Sánchez"
 output: html_document
 ---
 
@@ -48,9 +47,12 @@ rowData names → nombre de las fila
 iSEE es un paquete que nos permite observar de manera gráfica e interactiva varios de los datos de los objetos de SumarizedExperiment.
 
 ## Ejercicio con spatialLIBD
+![](C:/Users/Angelito/rnaseq_2021_notas/figuras/Reduced_dimension_plot1.jpg)
 
 
 - Explora en con un heatmap la expresión de los genes MOBP, MBP y PCP4. Si hacemos un clustering (agrupamos los genes), ¿cúales genes se parecen más?
+
+![](C:/Users/Angelito/rnaseq_2021_notas/figuras/Complex_heatmap_1.jpg)
 
 - MOBP y MBP son los más parecidos.
 
@@ -58,5 +60,32 @@ iSEE es un paquete que nos permite observar de manera gráfica e interactiva var
 
 - En WM. 
 
-(Gráficas en la carpeta de figuras del proyecto)
+## Proyectos recount
+
+- ReCount: datos de unos 20 estudios.
+
+- recount: 70 mil muestras de RNA-seq uniformemente procesadas.
+
+- recount3: 700 mil muestras de RNA-seq de humano y ratón.
+
+Para recuperar todos los datos de humano en recount3 se puede correr el siguiente código:
+```
+## Se puede extraer los proyectos con datos de humano en recount3.
+human_projects <- available_projects()
+```
+
+Para recuperar los datos de un proyecto en específico se puede utilizar el siguiente código:
+```
+proj_info <- subset(
+    human_projects,
+    project == "ID del proyecto" & project_type == "data_sources"
+)
+## Crea un objetio de tipo RangedSummarizedExperiment (RSE)
+## con la información a nivel de genes
+rse_gene_SRP009615 <- create_rse(proj_info)
+```
+
+## Ejercicio
+
+![](C:/Users/Angelito/rnaseq_2021_notas/figuras/Feature_asay_plot_1.jpg)
 
