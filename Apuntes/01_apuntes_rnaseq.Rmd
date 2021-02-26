@@ -85,16 +85,24 @@ El repositorio tiene orden, aunque la documentaci처n del c처digo no es tan expl�
 
 **ToxicoGx**
 El paquete permite analizar datos toxico genomicos, tanto para visualizaci처n y analisis de estos datos. 
+
 - En las pruebas en las distintas plataformas no se han encontrados errores
+
 - Hay una documentaci처n adecuada y ejemplos de uso
+
 - No tiene preguntas hasta ahora
+
 La URL al codigo no esta clara
 Link: https://bioconductor.org/packages/release/bioc/html/ToxicoGx.html
 
 **Nebulosa**
 Permite una visualizaci처n de datos de experimentos de una sola celula.
+
 - Presenta errores en todas las plataformas
+
 - Documentaci처n bastante breve
+
 - No tiene preguntas hasta ahora
+
 Link: https://bioconductor.org/packages/release/bioc/html/Nebulosa.html
 
