@@ -1,0 +1,42 @@
+---
+title: "Apuntes de la clase 3 Rna-seq"
+author: "Emmanuel Hernández Sánchez"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+## Modelos estadísticos
+
+Una **regresión linear** se puede expresar como:  $$Y = B_0 + B_1X + ϵ$$
+
+Siendo $$B_0$$ una constante donde intersecta la regresión con el eje y y el coeficiente $$B_1$$ explica la tendencia/pendiente de la regresión lineal. Dentro de la misma pueden haber varias variables $$X_n$$, para las cuales existe un coeficiente $$B_n$$.
+
+En R se utiliza la funcion ```model.matrix()``` y la sintaxis de la formula *Y ~ X1 + X2*.
+
+Al Crearse la matríz con la formula descrita arriba, se visualizan tres columnas, la primera (Intercept) te da la informacion de forma booleana si se le asigno un valor a la intersepción, es decir a $$B_0$$. Mientras que las demás te dan los valores asignados a las variables X.
+
+Con ```sumary()``` se pueden analizar la matríz, observandose sus mínimos, máximos, y sus cuartetos. También nos muestra la información de los coeficientes, su estimado, su error estandar, t value y su p-value.
+
+**ExploreModelMatrix** es un paquete de Bioconductor que nos ayuda a entender los modelos estadísticos que estamos usando gracias a visualizaciones. Este usa uno de los valores de cada variable como referencia para compararlos y crear una matriz. Los valores de referencia los toma por orden alfabético. Dependiendo de la cantidad de variables es como se complica y se crean matrices más grandes y es más laborioso su interpretación como en el ejemplo 2 http://bioconductor.org/packages/release/bioc/vignettes/ExploreModelMatrix/inst/doc/ExploreModelMatrix.html#example-2.
+
+![](C:/Users/Angelito/rnaseq_2021_notas/figuras/Ejemplo2_1.jpg)
+![](C:/Users/Angelito/rnaseq_2021_notas/figuras/Ejemplo2_2.jpg)
+
+Mientras que hay ocasiones en las que no necesitamos a (intercept) ni tener un valor de referencia como en el ejemplo 3 http://bioconductor.org/packages/release/bioc/vignettes/ExploreModelMatrix/inst/doc/ExploreModelMatrix.html#example-3. (Formula cuando no queremos a intercept= ~ 0 + X1 + X2...)
+
+![](C:/Users/Angelito/rnaseq_2021_notas/figuras/Ejemplo3.jpg)
+
+Al utilizar recount3 hay ciertas complicaciones para utilizar los paquetes para visualizar los modelos estadísticos:
+
+- Que la cantidad de atributos que tienen los datos difiere en alguno de ellos.
+
+- Que los valores no esten dentro de la matriz de datos no esten como el tipo de dato que deberían (factor, numeric).
+
+Una vez modificados los datos para realizar tus análisis de expresión diferencial, conforme a las variables que tu desees, hay otro paso a considerar para poder seguir. Es necesario **normalizar tus datos**, hay varias formas de normalizar los datos, una forma sencilla es la de obtener la proporción de expresión de cada gen en las dos condiciones y despues dividir estas proporciones por gen, el problema para este tipo de normalización es cuando tienen genes diferentes las dos condiciones generando que las proporciones parezcan diferentes para los genes compartidos. Otra alternativa para normalizar los datos es la descrita en artículos de edgeR.
+
+Una vez normalizados los datos se puede proceder al análisis, mediante graficas con las funciones como *ggplot*, *voom*, *plotMA*, *volcanoplot*. Mientras que para vizualizar los genes diferencialmente expresados, se pueden utilizar funciones como *pheatmap* o *plotMDS*.
+
+## Ejercicio
+
+![](C:/Users/Angelito/rnaseq_2021_notas/figuras/pheatmap.png)
