@@ -1,0 +1,143 @@
+# Proyecto SRP162774 de recount 3
+### Emmanuel Hernández Sánchez
+Se decidió analizó los datos del proyecto "SRP162774" de recount 3, para lo cual primero se tienen que descargar los datos de los proyectos de humanos para después buscar el proyecto.
+```{r}
+#Se extraen los proyectos de humanos de recount 3 para encontrar el proyecto en específico.
+library("recount3")
+human_projects <- available_projects()
+# Se  el proyecto "SRP162774" de recount 3.
+rse_gene_SRP162774 <- create_rse(subset(
+  human_projects,
+  project == "SRP162774" & project_type == "data_sources"
+))
+#Conversión de cuentas por nucleotido a cuentas por lectura.
+assay(rse_gene_SRP162774, "counts") <- compute_read_counts(rse_gene_SRP162774)
+# Se explora el objeto creado.
+rse_gene_SRP162774
+```
+Como se puede observar del objeto de RangedSumarizedExperiment el proyecto tiene 63856 genes, 911 muestras y 10 renglones de datos.
+```{r}
+# Se observan los atributos de 10 muestras para verificar que 
+#el número de campos sea igual en todos los casos.
+rse_gene_SRP162774$sra.sample_attributes[10:20]
+#Al no observarse diferencia alguna se procede a visualizar 
+#la información que se puede obtener del proyecto
+rse_gene_SRP162774 <- expand_sra_attributes(rse_gene_SRP162774)
+colData(rse_gene_SRP162774)[
+  ,
+  grepl("^sra_attribute", colnames(colData(rse_gene_SRP162774)))
+]
+```
+De este proyecto s puede observar que tiene 5 atributos de 8 que se pudieran elegir para un análisis estadístico (los campos de drug_treatment, gender, library_barcode, response_group y timepoint).
+```{r}
+#Se decidió utilizar 5 variables.
+rse_gene_SRP162774$sra_attribute.drug_treatment <- factor(rse_gene_SRP162774$sra_attribute.drug_treatment)
+rse_gene_SRP162774$sra_attribute.gender <- factor(rse_gene_SRP162774$sra_attribute.gender)
+rse_gene_SRP162774$sra_attribute.timepoint <- factor(rse_gene_SRP162774$sra_attribute.timepoint)
+rse_gene_SRP162774$sra_attribute.library_barcode <- factor(rse_gene_SRP162774$sra_attribute.library_barcode)
+rse_gene_SRP162774$sra_attribute.response_group <- factor(rse_gene_SRP162774$sra_attribute.response_group)
+
+summary(as.data.frame(colData(rse_gene_SRP162774)[
+  ,
+  grepl("^sra_attribute.[drug_treatment|gender|response_group|timepoint|library_barcode]", colnames(colData(rse_gene_SRP162774)))
+]))
+```
+En este caso como placebo es el grupo control se deberá tomar como referencia en los modelos estadísticos. Como se puede observar, library barcode posiblemente tenga demasiados elementos, por lo que será mejor omitirlo.
+```{r}
+#Se calculan los genes que se expresan en las condiciones del proyecto.
+rse_gene_SRP162774$assigned_gene_prop <- rse_gene_SRP162774$recount_qc.gene_fc_count_all.assigned / rse_gene_SRP162774$recount_qc.gene_fc_count_all.total
+summary(rse_gene_SRP162774$assigned_gene_prop)
+```
+Se observa que en generla la expresión de los genes es baja, considerando que son 911 muestras es factible concluir que la expresión de los genes es baja, y no atribuir esta baja expresión a una mala calidad de los datos.
+```{r}
+#Se observan si hay diferencia entre los diferentes grupos
+with(colData(rse_gene_SRP162774), tapply(assigned_gene_prop, sra_attribute.timepoint, summary))
+with(colData(rse_gene_SRP162774), tapply(assigned_gene_prop, sra_attribute.gender, summary))
+with(colData(rse_gene_SRP162774), tapply(assigned_gene_prop, sra_attribute.drug_treatment, summary))
+with(colData(rse_gene_SRP162774), tapply(assigned_gene_prop, sra_attribute.response_group, summary))
+```
+No se observan grandes diferencias de más de 0.02 en la expresión de genes, para comprobar que no hay diferencias entre los grupos hay que observar gráficas. Pero antes de eso necesitamos ver si es necesario omitir algunos genes o muestras.
+```{r}
+rse_gene_SRP162774_unfiltered <- rse_gene_SRP162774
+hist(rse_gene_SRP162774$assigned_gene_prop)
+```
+Veamos que pasa si quitamos las muestras abajo de 0.08.
+```{r}
+table(rse_gene_SRP162774$assigned_gene_prop < 0.08)
+```
+```{r}
+rse_gene_SRP162774 <- rse_gene_SRP162774[, rse_gene_SRP162774$assigned_gene_prop > 0.08]
+gene_means <- rowMeans(assay(rse_gene_SRP162774, "counts"))
+summary(gene_means)
+```
+Vemos que hay varias muestras que tienen promedio de 0 genes expresados.
+```{r}
+rse_gene_SRP162774 <- rse_gene_SRP162774[gene_means > 0, ]
+dim(rse_gene_SRP162774)
+```
+Al quitar estos genes nos quedan 44885 genes y 903 muestras, ahora veamoslos con boxplots.
+```{r}
+library("edgeR")
+library("ggplot2")
+dge <- DGEList(
+  counts = assay(rse_gene_SRP162774, "counts"),
+  genes = rowData(rse_gene_SRP162774)
+)
+dge <- calcNormFactors(dge)
+ggplot(as.data.frame(colData(rse_gene_SRP162774)), aes(y = assigned_gene_prop, x = sra_attribute.response_group)) +
+  geom_boxplot() +
+  ylab("Assigned Gene Prop") +
+  xlab("Response Group")
+ggplot(as.data.frame(colData(rse_gene_SRP162774)), aes(y = assigned_gene_prop, x = sra_attribute.drug_treatment)) +
+  geom_boxplot() +
+  ylab("Assigned Gene Prop") +
+  xlab("Drug treatment")
+ggplot(as.data.frame(colData(rse_gene_SRP162774)), aes(y = assigned_gene_prop, x = sra_attribute.timepoint)) +
+  geom_boxplot() +
+  ylab("Assigned Gene Prop") +
+  xlab("timepoint")
+```
+En el caso de grupos de respuesta no hay mucha diferencia en la expresión de genes, pero se ve que los full responser tienen una concentración mayor cerca de su media, mientras que los partial responder tienen una mayor dispersión de sus datos casi igual al grupo control de placebo. En la gráfica de drug treatment tampoco se ve diferencia significativa. En la gráfica de timepoint el grupo de post-sugery 2 se ve con una ligera mayor expresión de genes que los otros dos.
+```{r}
+library("limma")
+mod <- model.matrix(~  sra_attribute.response_group + sra_attribute.drug_treatment + sra_attribute.timepoint + sra_attribute.gender + assigned_gene_prop,
+                    data = colData(rse_gene_SRP162774))
+
+vGene <- voom(dge, mod, plot = TRUE)
+
+eb_results <- eBayes(lmFit(vGene))
+
+de_results <- topTable(
+    eb_results,
+    coef = 2,
+    number = nrow(rse_gene_SRP162774),
+    sort.by = "none"
+)
+```
+¿nos da un warning de que el cálculo de coeficientes para drug_treatment da como resultado NA? ¿No pudo calcular por completo el modelo dado?
+```{r}
+
+```
+
+```{r}
+library("pheatmap")
+exprs_heatmap <- vGene$E[rank(de_results$adj.P.Val) <= 50, ]
+
+## Creemos una tabla con información de las muestras
+## y con nombres de columnas más amigables
+df <- as.data.frame(colData(rse_gene_SRP162774)[, c("sra_attribute.response_group","sra_attribute.drug_treatment", "sra_attribute.timepoint", "sra_attribute.gender")])
+colnames(df) <- c("Response","Treatment", "Timepoint", "Sex")
+
+pdf("pheatmap_SRP162774.pdf", height = 14, useDingbats = FALSE)
+pheatmap(
+  exprs_heatmap,
+  cluster_rows = TRUE,
+  cluster_cols = TRUE,
+  show_rownames = FALSE,
+  show_colnames = FALSE,
+  annotation_col = df
+)
+dev.off()
+```
+
+Pareciera que hay un tipo de división de la expresión de genes en este heatmap, pero no se le puede atribuir a ningún parámetro, aunque se puede observar que hay un sobrelape entre los diferentes grupos de tratamiento y respuesta, que nos indica que su grupo control (Placebo) funcionó. También se observa pequeñas regiones donde el sobrelape se da junto con el timepoint, y en estas regiones se ve un ligero cambio de expresión. En lo personal le atribuiría el cambio de expresión al tratamiento y a la respuesta a este.
